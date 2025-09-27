@@ -19,12 +19,21 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
-// your first API endpoint...
-app.get('/api/hello', function (req, res) {
-  res.json({ greeting: 'hello API' });
+// API endpoint for header parser microservice
+app.get('/api/whoami', function (req, res) {
+  const ipadress = req.ip || req.headers['x-forwarded-for'] || 'Unknown';
+  const language = req.headers['accept-language'].split(',')
+  [0]; // Get the first language from the list
+  const software = req.headers['user-agent'];
+
+  res.json({
+    ipaddress: ipadress,
+    language: language,
+    software: software
+  });
 });
 
-// listen for requests :)
+// listen on port set in enviroment variable or default 300
 var listener = app.listen(process.env.PORT || 3000, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
